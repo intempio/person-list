@@ -32,7 +32,14 @@
             <td>{{ person['notes'] }}</td>
             <td class="id">{{ person['person_id'] }}</td>
             <td>
-              <a href="#openModal">
+            <div>
+              <b-button v-b-modal.modalEdit variant="primary" @click="showModal(person)">
+                Edit
+              </b-button>
+
+            </div>
+
+              <!--a href="#openModal">
                 <button>Edit</button>
               </a>
               <div id="openModal" class="modalDialog">
@@ -41,7 +48,7 @@
                   <div class="id"></div>
                   {{ person['person_id'] }}
                 </div>
-              </div>
+              </div-->
             </td>
           </tr>
         </tbody>
@@ -50,14 +57,37 @@
         <button @click="prevPage">&laquo; Previous</button>
         <button @click="nextPage">Next &raquo;</button>
       </div>
+
+              <!-- Modal Component -->
+              <b-modal id="modalEdit"
+                       ref="modal"
+                       title="Edit Person"
+                       @ok="handleOk"
+                       >
+                <form @submit.stop.prevent="handleSubmit">
+                  <b-form-input type="text" placeholder="First Name" v-model="personModal.first_name"></b-form-input>
+                  <br>
+                  <b-form-input type="text" placeholder="Last Name" v-model="personModal.last_name"></b-form-input>
+                  <br>
+                  <b-form-input type="text" placeholder="Email" v-model="personModal.email"></b-form-input>
+                  <br>
+                  <b-form-input type="text" placeholder="Cell" v-model="personModal.cell"></b-form-input>
+                  <br>
+                  <b-form-input type="text" placeholder="Primary Comm Method" v-model="personModal.primary_comm_method"></b-form-input>
+                  <br>
+                  <b-form-input type="text" placeholder="Notes" v-model="personModal.notes"></b-form-input>
+                  <br>
+                </form>
+              </b-modal>
     </div>
   </section>
 </template>
 
 <script>
 import axios from 'axios';
+
 export default {
-  // components: { DatePicker },
+  //components: { BootstrapVue },
   data() {
     return {
       date: [], //for the daterange
@@ -67,6 +97,8 @@ export default {
       currentPage: 1,
       search: '',
       persons: [],
+      personModal:{},
+
     };
   },
   head: {
@@ -86,6 +118,42 @@ export default {
       } catch (e) {
         console.log('Error in function handleSubmit' + e);
       }
+    },
+    showModal (data) {
+        this.personModal = data;
+
+    },
+    clearName () {
+      this.name = ''
+    },
+    handleOk (evt) {
+      evt.preventDefault()
+      //if (!this.name) {
+      //  alert('Please enter your name')
+      //} else {
+        this.handleSubmit()
+      //}
+    },
+    async handleSubmit () {
+            //this.names.push(this.name)
+            //this.clearName()
+            try{
+              let data = {
+                  "person_id": this.personModal.person_id,
+                  "first_name": this.personModal.first_name,
+                  "last_name": this.personModal.last_name,
+                  "email": this.personModal.email,
+                  "primary_comm_method": this.personModal.primary_comm_method,
+                  "cell": this.personModal.cell,
+                  "notes": this.personModal.notes
+              };
+              console.log('data' + data)
+              let response = await axios.put('https://intempio-api-v3.herokuapp.com/api/v3/persons/',data);
+              console.log(response)
+              this.$refs.modal.hide()
+            }catch (e) {
+              console.log('Error in function handleSubmit' + e );
+            }
     },
     sort: function(s) {
       //if s == current sort, reverse
