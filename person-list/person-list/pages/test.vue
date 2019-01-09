@@ -30,26 +30,46 @@
             <td>{{ person['cell'] }}</td>
             <td>{{ person['primary_comm_method'] }}</td>
             <td>{{ person['notes'] }}</td>
+            <td class="id">{{ person['person_id'] }}</td>
             <td>
-              <a href="/create">
-                <button>Edit</button>
-              </a>
+              <div>
+                <b-button v-b-modal.modalEdit variant="primary" @click="showModal(person)">
+                  Edit
+                </b-button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <button @click="prevPage">&laquo; Previous</button>
-        <button @click="nextPage">Next &raquo;</button>
+        <button @click="prevPage">&laquo;</button>
+        <button @click="nextPage">&raquo;</button>
       </div>
+      <!-- Modal Component -->
+      <b-modal id="modalEdit" ref="modal" title="Edit Person" @ok="handleOk">
+        <form @submit.stop.prevent="handleSubmit">
+          <b-form-input type="text" placeholder="First Name" v-model="personModal.first_name"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Last Name" v-model="personModal.last_name"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Email" v-model="personModal.email"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Cell" v-model="personModal.cell"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Primary Comm Method" v-model="personModal.primary_comm_method" :options="primary_comms"></b-form-input>
+          <br>
+          <b-form-textarea placeholder="Notes" v-model="personModal.notes"></b-form-textarea>
+          <br>
+        </form>
+      </b-modal>
     </div>
   </section>
 </template>
 
 <script>
 import axios from 'axios';
+
 export default {
-  // components: { DatePicker },
   data() {
     return {
       date: [], //for the daterange
@@ -59,6 +79,14 @@ export default {
       currentPage: 1,
       search: '',
       persons: [],
+      personModal: {},
+      primary_comms: [
+        { text: 'Select Primary Comm Method', value: null },
+        'Email',
+        'Chat',
+        'Call',
+      ],
+      show: true,
     };
   },
   head: {
@@ -79,6 +107,39 @@ export default {
         console.log('Error in function handleSubmit' + e);
       }
     },
+    showModal(data) {
+      this.personModal = data;
+    },
+    clearName() {
+      this.name = '';
+    },
+    handleOk(evt) {
+      evt.preventDefault();
+      this.handleSubmit();
+      //}
+    },
+    async handleSubmit() {
+      try {
+        let data = {
+          person_id: this.personModal.person_id,
+          first_name: this.personModal.first_name,
+          last_name: this.personModal.last_name,
+          email: this.personModal.email,
+          primary_comm_method: this.personModal.primary_comm_method,
+          cell: this.personModal.cell,
+          notes: this.personModal.notes,
+        };
+        console.log('data' + data);
+        let response = await axios.put(
+          'https://intempio-api-v3.herokuapp.com/api/v3/persons/',
+          data
+        );
+        console.log(response);
+        this.$refs.modal.hide();
+      } catch (e) {
+        console.log('Error in function handleSubmit' + e);
+      }
+    },
     sort: function(s) {
       //if s == current sort, reverse
       if (s === this.currentSort) {
@@ -94,18 +155,22 @@ export default {
       if (this.currentPage > 1) this.currentPage--;
     },
     sortedPersons: function() {
-      return this.persons.sort((a, b) => {
-        let modifier = 1;
-        if (this.currentSortDir === 'desc') modifier = -1;
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-        return 0;
-      });
-      /* .filter((row, index) => {
+      /*if (this.search.length <= 0) {
+        return this.searchPersons();
+      }*/
+      return this.persons
+        .sort((a, b) => {
+          let modifier = 1;
+          if (this.currentSortDir === 'desc') modifier = -1;
+          if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+        })
+        .filter((row, index) => {
           let start = (this.currentPage - 1) * this.pageSize;
           let end = this.currentPage * this.pageSize;
           if (index >= start && index < end) return true;
-        });*/
+        });
     },
     searchPersons: function() {
       var self = this;
@@ -120,8 +185,9 @@ export default {
   computed: {
     filteredItems: function() {
       let items = this.items;
-      items = this.sortedPersons(items);
-      items = this.searchPersons(items);
+      items = this.searchPersons();
+      items = this.sortedPersons();
+
       return items;
     },
   },

@@ -75,6 +75,7 @@ export default {
         this.cell = '';
         this.notes = '';
         this.notif = 'Successfully Submitted';
+        this.$router.push('/');
         console.log('data sajdskf');
       } catch (e) {
         window.alert('Error logging in');

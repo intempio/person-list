@@ -52,6 +52,14 @@ button.btn.btn-primary {
   cursor: pointer !important;
   border-radius: 0;
 }
+button.btn.btn-secondary {
+  border: 0;
+  margin-right: 10px;
+  padding: 5px 20px;
+  font-size: 13px;
+  cursor: pointer !important;
+  border-radius: 0;
+}
 button.btn.btn-danger {
   border: 0;
   margin-right: 10px;
@@ -60,6 +68,26 @@ button.btn.btn-danger {
   font-size: 13px;
   cursor: pointer !important;
   border-radius: 0;
+}
+button.close {
+  border: 0;
+  box-shadow: none;
+  right: -9px;
+  background: #0097e1 !important;
+  opacity: 0.9 !important;
+  text-align: center;
+  width: 10px;
+  margin: 0 !important;
+  padding: 0 0 2px !important;
+  width: 28px;
+  font-weight: normal;
+  font-size: 16px;
+  border-radius: 50%;
+}
+p.notif {
+  padding: 20px 0;
+  font-style: italic;
+  color: green;
 }
 button:hover,
 button.btn.btn-primary:hover {

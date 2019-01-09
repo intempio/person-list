@@ -32,53 +32,36 @@
             <td>{{ person['notes'] }}</td>
             <td class="id">{{ person['person_id'] }}</td>
             <td>
-            <div>
-              <b-button v-b-modal.modalEdit variant="primary" @click="showModal(person)">
-                Edit
-              </b-button>
-
-            </div>
-
-              <!--a href="#openModal">
-                <button>Edit</button>
-              </a>
-              <div id="openModal" class="modalDialog">
-                <div>
-                  <a href="#close" title="Close" class="close">X</a>
-                  <div class="id"></div>
-                  {{ person['person_id'] }}
-                </div>
-              </div-->
+              <div>
+                <b-button v-b-modal.modalEdit variant="primary" @click="showModal(person)">
+                  Edit
+                </b-button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <button @click="prevPage">&laquo; Previous</button>
-        <button @click="nextPage">Next &raquo;</button>
+        <button @click="prevPage">&laquo;</button>
+        <button @click="nextPage">&raquo;</button>
       </div>
-
-              <!-- Modal Component -->
-              <b-modal id="modalEdit"
-                       ref="modal"
-                       title="Edit Person"
-                       @ok="handleOk"
-                       >
-                <form @submit.stop.prevent="handleSubmit">
-                  <b-form-input type="text" placeholder="First Name" v-model="personModal.first_name"></b-form-input>
-                  <br>
-                  <b-form-input type="text" placeholder="Last Name" v-model="personModal.last_name"></b-form-input>
-                  <br>
-                  <b-form-input type="text" placeholder="Email" v-model="personModal.email"></b-form-input>
-                  <br>
-                  <b-form-input type="text" placeholder="Cell" v-model="personModal.cell"></b-form-input>
-                  <br>
-                  <b-form-input type="text" placeholder="Primary Comm Method" v-model="personModal.primary_comm_method"></b-form-input>
-                  <br>
-                  <b-form-input type="text" placeholder="Notes" v-model="personModal.notes"></b-form-input>
-                  <br>
-                </form>
-              </b-modal>
+      <!-- Modal Component -->
+      <b-modal id="modalEdit" ref="modal" title="Edit Person" @ok="handleOk">
+        <form @submit.stop.prevent="handleSubmit">
+          <b-form-input type="text" placeholder="First Name" v-model="personModal.first_name"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Last Name" v-model="personModal.last_name"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Email" v-model="personModal.email"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Cell" v-model="personModal.cell"></b-form-input>
+          <br>
+          <b-form-input type="text" placeholder="Primary Comm Method" v-model="personModal.primary_comm_method" :options="primary_comms"></b-form-input>
+          <br>
+          <b-form-textarea placeholder="Notes" v-model="personModal.notes"></b-form-textarea>
+          <br>
+        </form>
+      </b-modal>
     </div>
   </section>
 </template>
@@ -97,8 +80,14 @@ export default {
       currentPage: 1,
       search: '',
       persons: [],
-      personModal:{},
-
+      personModal: {},
+      primary_comms: [
+        { text: 'Select Primary Comm Method', value: null },
+        'Email',
+        'Chat',
+        'Call',
+      ],
+      show: true,
     };
   },
   head: {
@@ -119,41 +108,43 @@ export default {
         console.log('Error in function handleSubmit' + e);
       }
     },
-    showModal (data) {
-        this.personModal = data;
-
+    showModal(data) {
+      this.personModal = data;
     },
-    clearName () {
-      this.name = ''
+    clearName() {
+      this.name = '';
     },
-    handleOk (evt) {
-      evt.preventDefault()
+    handleOk(evt) {
+      evt.preventDefault();
       //if (!this.name) {
       //  alert('Please enter your name')
       //} else {
-        this.handleSubmit()
+      this.handleSubmit();
       //}
     },
-    async handleSubmit () {
-            //this.names.push(this.name)
-            //this.clearName()
-            try{
-              let data = {
-                  "person_id": this.personModal.person_id,
-                  "first_name": this.personModal.first_name,
-                  "last_name": this.personModal.last_name,
-                  "email": this.personModal.email,
-                  "primary_comm_method": this.personModal.primary_comm_method,
-                  "cell": this.personModal.cell,
-                  "notes": this.personModal.notes
-              };
-              console.log('data' + data)
-              let response = await axios.put('https://intempio-api-v3.herokuapp.com/api/v3/persons/',data);
-              console.log(response)
-              this.$refs.modal.hide()
-            }catch (e) {
-              console.log('Error in function handleSubmit' + e );
-            }
+    async handleSubmit() {
+      //this.names.push(this.name)
+      //this.clearName()
+      try {
+        let data = {
+          person_id: this.personModal.person_id,
+          first_name: this.personModal.first_name,
+          last_name: this.personModal.last_name,
+          email: this.personModal.email,
+          primary_comm_method: this.personModal.primary_comm_method,
+          cell: this.personModal.cell,
+          notes: this.personModal.notes,
+        };
+        console.log('data' + data);
+        let response = await axios.put(
+          'https://intempio-api-v3.herokuapp.com/api/v3/persons/',
+          data
+        );
+        console.log(response);
+        this.$refs.modal.hide();
+      } catch (e) {
+        console.log('Error in function handleSubmit' + e);
+      }
     },
     sort: function(s) {
       //if s == current sort, reverse
@@ -170,6 +161,9 @@ export default {
       if (this.currentPage > 1) this.currentPage--;
     },
     sortedPersons: function() {
+      /*if (this.search.length <= 0) {
+        return this.searchPersons();
+      }*/
       return this.persons
         .sort((a, b) => {
           let modifier = 1;
@@ -197,8 +191,8 @@ export default {
   computed: {
     filteredItems: function() {
       let items = this.items;
-      items = this.sortedPersons(items);
-      items = this.searchPersons(items);
+      items = this.searchPersons();
+      items = this.sortedPersons();
       return items;
     },
   },
