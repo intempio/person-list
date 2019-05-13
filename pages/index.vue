@@ -235,10 +235,8 @@ export default {
           primary_comm_method: this.primary_comm,
           notes: this.notes
         };
-        let response = await axios.post(
-          "https://intempio-api-v3.herokuapp.com/api/v3/persons/",
-          data
-        );
+        let url = "/api/v3/persons/";
+        let response = await axios.post(process.env.VUE_APP_API + url, data);
         this.first_name = "";
         this.last_name = "";
         this.email = "";
@@ -255,10 +253,8 @@ export default {
     },
     async onLoadData() {
       try {
-        let response = await axios.get(
-          "https://intempio-api-v3.herokuapp.com/api/v3/persons/"
-        );
-
+        let url = "/api/v3/persons/";
+        let response = await axios.get(process.env.VUE_APP_API + url);
         this.persons = response.data;
       } catch (e) {
         console.log("Error in function handleSubmit" + e);
@@ -292,10 +288,8 @@ export default {
           notes: this.personModal.notes
         };
         console.log("data" + data);
-        let response = await axios.put(
-          "https://intempio-api-v3.herokuapp.com/api/v3/persons/",
-          data
-        );
+        let url = "/api/v3/persons/";
+        let response = await axios.put(process.env.VUE_APP_API + url, data);
         console.log(response);
         this.$refs.modal.hide();
       } catch (e) {
