@@ -56,7 +56,7 @@
           <br>
           <b-form-input type="text" placeholder="Cell" v-model="personModal.cell"></b-form-input>
           <br>
-          <b-form-input type="text" placeholder="Primary Comm Method" v-model="personModal.primary_comm_method" :options="primary_comms"></b-form-input>
+          <b-form-input type="text" placeholder="Primary Comm Method" :options="primary_comms" v-model="personModal.primary_comm_method"></b-form-input>
           <br>
           <b-form-textarea placeholder="Notes" v-model="personModal.notes"></b-form-textarea>
           <br>
@@ -191,9 +191,10 @@ export default {
   computed: {
     filteredItems: function() {
       let items = this.items;
-      items = this.searchPersons();
-      items = this.sortedPersons();
-      return items;
+      if (this.search.length > 0) {
+        return this.searchPersons();
+      }
+      return this.sortedPersons();
     },
   },
 };

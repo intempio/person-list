@@ -84,10 +84,11 @@ button.close {
   font-size: 16px;
   border-radius: 50%;
 }
-p.notif {
+span.notif {
   padding: 20px 0;
   font-style: italic;
   color: green;
+  font-size: 13px;
 }
 button:hover,
 button.btn.btn-primary:hover {
@@ -116,7 +117,48 @@ textarea.form-control {
   padding: 5px 10px;
   font-size: 13px;
 }
+td.prod_name {
+  text-align: left !important;
+}
+td.prod_name img {
+  padding-right: 10px;
+}
+ul.sub-heading li {
+  width: 59%;
+  display: inline-block;
+  font-size: 14px;
+  list-style-type: none;
+  font-weight: normal;
+}
+ul.sub-heading li:last-child {
+  width: 40%;
+}
+.modal-dialog.modal-md {
+  max-width: 800px;
+}
 
+.modal-body .pagination {
+  margin-top: 0;
+}
+.modal-body th {
+  text-align: center;
+}
+.modal-body td {
+  width: 24%;
+  padding: 10px;
+}
+.modal-body td:last-child {
+  width: 11%;
+  padding: 0;
+  margin: 0;
+}
+.modal-body td:last-child button {
+  margin: 0;
+}
+.modal-body input {
+  border-radius: 4px;
+  padding: 7px 10px;
+}
 /*----Modal-----*/
 .modalDialog {
   position: fixed;
@@ -142,7 +184,7 @@ textarea.form-control {
   width: 400px;
   position: relative;
   margin: 10% auto;
-  padding: 5px 20px 15px 20px !important;
+  padding: 20px 20px 0px 20px !important;
   border-radius: 0;
   background: #fff;
   text-align: left;
@@ -188,6 +230,9 @@ textarea.form-control {
   margin-left: 0;
   margin-top: 0;
 }
+.modal-body td:first-child {
+  width: 1%;
+}
 
 @media screen and (max-width: 845px) {
   section.container {
@@ -205,5 +250,28 @@ textarea.form-control {
   table.person_tbl td {
     width: 100%;
     display: block;
+  }
+  .half {
+    width: 100%;
+  }
+  .half button.btn.btn-primary {
+    margin-top: -5px;
+  }
+}
+@media screen and (max-width: 570px) {
+  .search-cont {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .half button.btn.btn-primary {
+    float: right;
+    margin-right: 0;
+  }
+  .pagination {
+    border-top: #eee solid 2px;
+    padding-top: 20px;
+  }
+  .modal-dialog {
+    max-width: 800px;
   }
 }
