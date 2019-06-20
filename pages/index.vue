@@ -104,7 +104,13 @@
               ></th>
             <th>Cell </th>
             <th>Primary <br /> Comm Method</th>
-            <th>Notes</th>
+            <th
+              @click="sort('notes')"
+              style="cursor:pointer"
+            >Notes <img
+                src="~/assets/sort.png"
+                class="tbl-sort"
+              ></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -170,12 +176,20 @@
             v-model="personModal.cell"
           ></b-form-input>
           <br>
-          <b-form-input
+          <!--<b-form-input
             type="text"
             placeholder="Primary Comm Method"
             v-model="personModal.primary_comm_method"
             :options="primary_comms"
-          ></b-form-input>
+          ></b-form-input>-->
+          <b-form-group>
+            <b-form-select
+              :options="primary_comms"
+              v-model="personModal.primary_comm_method"
+              placeholder="Primary Communication"
+            >
+            </b-form-select>
+          </b-form-group>
           <br>
           <b-form-textarea
             placeholder="Notes"
